@@ -1,7 +1,7 @@
-namespace Solid.Rest.Practice.API;
+﻿namespace Solid.Rest.Practice.API.DAL;
 
-public class Customer{
-    
+public class CustomerEntity
+{
     public int? Id { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;

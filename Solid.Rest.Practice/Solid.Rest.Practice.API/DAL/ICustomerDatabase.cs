@@ -1,13 +1,12 @@
-﻿namespace Solid.Rest.Practice.API.BLL;
+﻿namespace Solid.Rest.Practice.API.DAL;
 
-internal interface ICustomerDatabase
+public interface ICustomerDatabase
 {
-}
+    public IEnumerable<CustomerEntity> GetAllCustomers();
 
-class CustomerDatabase : ICustomerDatabase
-{
-    public CustomerDatabase(ISuperSimpleMemoryDatabase superSimpleMemoryDatabase)
-    {
-        
-    }
+    public CustomerEntity AddNewCustomer(CustomerEntity newCustomer);
+
+    public CustomerEntity UpdateCustomer(CustomerEntity customerWithChanges);
+
+    public bool RemoveCustomer(int id);
 }

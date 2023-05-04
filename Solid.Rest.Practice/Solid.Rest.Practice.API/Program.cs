@@ -1,8 +1,14 @@
+using Solid.Rest.Practice.API;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
+
+
+//Most of this file was provided by the template, the below row is the only significant thing I've added.
+Services.ServiceRegistrations(builder);
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -18,7 +24,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//Added by template, removed for now
+//app.UseAuthorization();
 
 app.MapControllers();
 

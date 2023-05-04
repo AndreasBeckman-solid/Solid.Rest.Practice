@@ -1,6 +1,5 @@
-using System.Collections;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Solid.Rest.Practice.API.BLL;
 
 namespace Solid.Rest.Practice.API.Controllers;
 
@@ -8,51 +7,78 @@ namespace Solid.Rest.Practice.API.Controllers;
 [Route("[controller]")]
 public class CustomerController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
     private readonly ILogger<CustomerController> _logger;
+    private readonly ICustomerService _customerService;
 
-    public CustomerController(ILogger<CustomerController> logger)
+    public CustomerController(ILogger<CustomerController> logger, ICustomerService customerService)
     {
         _logger = logger;
+        _customerService = customerService;
     }
     
     //AllCustomersGroupedByLastName
-    public IEnumerable<IGrouping<string, Customer>> Get()
+    [HttpGet(Name="GetAllCustomers")]
+    public IResult Get()
     {
-        return new List<Customer>().GroupBy(x => x.LastName);
+        
+        return Results.Ok(_customerService.GetAllCustomersGroupedByLastName());
     }
-
+    
     //SingleCustomerFromId
-    public IEnumerable<IGrouping<string, Customer>> Get(int id)
+    [HttpGet("{id:int}",Name="GetCustomer")]
+    public IResult Get(int id)
     {
-        return new List<Customer>().GroupBy(x => x.LastName);
+        try
+        {
+            return Results.Ok(_customerService.GetCustomer(id));
+        }
+        catch (KeyNotFoundException e)
+        {
+            return Results.NotFound(e.Message);
+        }
     }
     
-    
+
     
     //CreateNewCustomer
+    [HttpPost(Name="AddCustomer")]
     public IResult Post(Customer newCustomer)
     {
-        //Call BLL and make actual decisions regarding result after
-        
-        return Results.Ok<Customer>(newCustomer);
+        try
+        {
+            return Results.Ok<Customer>(_customerService.AddCustomer(newCustomer));
+        }
+        catch (InvalidOperationException e)
+        {
+            return Results.BadRequest(e.Message);
+        }
     }
     
     //UpdateLastName
-    public IEnumerable<IGrouping<string, Customer>> Put(int id, string newLastname)
+    [HttpPut(Name="UpdateCustomerLastName")]
+    public IResult Put(int id, string newLastname)
     {
-
-        return new List<Customer>().GroupBy(x => x.LastName);
+        try
+        {
+            return Results.Ok(_customerService.ReplaceLastName(id, newLastname));
+        }
+        catch (KeyNotFoundException e)
+        {
+            return Results.NotFound(e.Message);
+        }
     }
     
     //DeleteACustomer
-    public IEnumerable<IGrouping<string, Customer>> Delete(int id)
+    [HttpDelete(Name="RemoveCustomer")]
+    public IResult Delete(int id)
     {
-
-        return new List<Customer>().GroupBy(x => x.LastName);
+        if (_customerService.RemoveCustomer(id))
+        {
+            return Results.Ok();
+        }
+        else
+        {
+            return Results.NotFound();
+        }
     }
 }
